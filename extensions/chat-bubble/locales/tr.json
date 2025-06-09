@@ -1,0 +1,54 @@
+{
+    "chat": {
+      "title": "Mağaza Asistanı",
+      "inputPlaceholder": "Mesajınızı buraya yazın...",
+      "sendButton": "Gönder",
+      "closeButton": "Kapat",
+      "typing": "yazıyor...",
+      "loading": "Geçmiş konuşmalar yükleniyor...",
+      "welcome": "👋 Merhaba! Size nasıl yardımcı olabilirim?",
+      "errorGeneral": "Üzgünüm, isteğinizi şu anda işleyemedim. Lütfen daha sonra tekrar deneyin.",
+      "errorBusy": "Üzgünüm, sunucularımız şu anda meşgul. Lütfen daha sonra tekrar deneyin.",
+      "authInProgress": "Kimlik doğrulama devam ediyor. Lütfen açılan pencerede işlemi tamamlayın.",
+      "authSuccess": "Kimlik doğrulama başarılı! İsteğinizle devam ediyorum.",
+      "authPopupBlocked": "Shopify ile kimlik doğrulaması için pop-up'lara izin verin.",
+      "noProductsFound": "Ürün bulunamadı",
+      "topProducts": "En Uygun Ürünler",
+      "addToCart": "Sepete Ekle",
+      "proceedToCheckout": "ödeme için buraya tıklayın",
+      "noHistoryFetch": "Konuşma geçmişi yüklenemedi",
+      "openChat": "Sohbet başlat",
+      "closeChat": "Sohbeti kapat",
+      "typeMessage": "Mesaj yazın",
+      "sendMessage": "Mesaj gönder",
+      "chatMessages": "Sohbet mesajları",
+      "businessHoursOffline": "Şu anda çevrimdışıyız. Çalışma saatlerimiz:",
+      "fileUploadError": "Dosya yükleme başarısız. Lütfen tekrar deneyin.",
+      "fileTooLarge": "Dosya çok büyük. Maksimum boyut {size}MB.",
+      "fileTypeNotAllowed": "Dosya türüne izin verilmiyor.",
+      "connectionError": "Bağlantı hatası. Lütfen internet bağlantınızı kontrol edin.",
+      "rateLimit": "Çok fazla istek. Lütfen bir dakika bekleyin.",
+      "networkOffline": "Çevrimdışısınız. Lütfen bağlantınızı kontrol edin.",
+      "quickActions": {
+        "bestsellers": "En çok satanları göster",
+        "trackOrder": "Siparişimi takip et",
+        "returnPolicy": "İade politikası",
+        "contactSupport": "Destek ile iletişim",
+        "sizeGuide": "Beden rehberi"
+      },
+      "notifications": {
+        "newMessage": "Yeni mesaj alındı",
+        "messageSent": "Mesaj gönderildi",
+        "connecting": "Bağlanıyor...",
+        "connected": "Bağlandı",
+        "disconnected": "Bağlantı kesildi"
+      },
+      "accessibility": {
+        "chatWidget": "Sohbet widget'ı",
+        "minimizeChat": "Sohbeti küçült",
+        "expandChat": "Sohbeti genişlet",
+        "scrollToBottom": "En alta kaydır",
+        "newMessageAlert": "Yeni mesaj"
+      }
+    }
+  }

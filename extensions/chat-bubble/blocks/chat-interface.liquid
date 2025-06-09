@@ -1,43 +1,189 @@
 {{ 'chat.css' | asset_url | stylesheet_tag }}
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-<div class="shop-ai-chat-container">
-  <div class="shop-ai-chat-bubble" style="background-color: {{ block.settings.chat_bubble_color }}">
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
-    </svg>
+{% comment %} Preload important assets {% endcomment %}
+<link rel="preload" href="{{ 'chat.js' | asset_url }}" as="script">
+
+
+
+<div class="shop-ai-chat-container" 
+     data-position="{{ block.settings.chat_position }}"
+     data-theme="{{ block.settings.chat_theme }}"
+     style="--chat-primary-color: {{ block.settings.chat_bubble_color }}; --chat-secondary-color: {{ block.settings.chat_secondary_color }};">
+  
+  <div class="shop-ai-chat-bubble" 
+       style="background: {{ block.settings.chat_bubble_color }};"
+       aria-label="{% if is_turkish %}Sohbet başlat{% else %}Open chat{% endif %}"
+       role="button"
+       tabindex="0">
+    
+    {% comment %} Custom icon or default {% endcomment %}
+    {% if block.settings.custom_icon %}
+      <img src="{{ block.settings.custom_icon | image_url: width: 32 }}" 
+           alt="Chat icon" 
+           width="32" 
+           height="32"
+           loading="lazy">
+    {% else %}
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+      </svg>
+    {% endif %}
+    
+    {% comment %} Notification badge {% endcomment %}
+    {% if block.settings.show_notification_badge %}
+      <div class="shop-ai-notification-badge" aria-hidden="true"></div>
+    {% endif %}
   </div>
 
-  <div class="shop-ai-chat-window">
-    <div class="shop-ai-chat-header">
-      <div>{{ 'chat.title' | t }}</div>
-      <button class="shop-ai-chat-close">✕</button>
+  <div class="shop-ai-chat-window" role="dialog" aria-modal="true" aria-labelledby="chat-header-title">
+    <div class="shop-ai-chat-header" style="background: {{ block.settings.chat_bubble_color }};">
+      <div id="chat-header-title">
+        {% if is_turkish and block.settings.welcome_message_tr != blank %}
+          {{ block.settings.chat_title_tr | default: 'Konjabags Yapay Zeka Asistanı' }}
+        {% else %}
+          {{ block.settings.chat_title | default: 'Konjabags AI Assistant' }}
+        {% endif %}
+      </div>
+
+      
+      <button class="shop-ai-chat-close" aria-label="{% if is_turkish %}Sohbeti kapat{% else %}Close chat{% endif %}">✕</button>
     </div>
 
-    <div class="shop-ai-chat-messages">
+    <div class="shop-ai-chat-messages" 
+         role="log" 
+         aria-live="polite" 
+         aria-label="{% if is_turkish %}Sohbet mesajları{% else %}Chat messages{% endif %}">
       <!-- Messages will be added here by JavaScript -->
     </div>
 
+    {% comment %} Typing indicator area {% endcomment %}
+    <div class="shop-ai-typing-area" aria-live="polite"></div>
+
     <div class="shop-ai-chat-input">
-      <input type="text" placeholder="{{ 'chat.inputPlaceholder' | t }}">
-      <button class="shop-ai-chat-send">
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <input type="text" 
+             placeholder="{% if is_turkish and block.settings.input_placeholder_tr != blank %}{{ block.settings.input_placeholder_tr }}{% else %}{{ block.settings.input_placeholder | default: 'Type your message...' }}{% endif %}"
+             aria-label="{% if is_turkish %}Mesaj yazın{% else %}Type message{% endif %}"
+             maxlength="500"
+             autocomplete="off"
+             spellcheck="true">
+      
+      {% comment %} Character counter {% endcomment %}
+      {% if block.settings.show_character_counter %}
+        <div class="shop-ai-char-counter">
+          <span class="current">0</span>/<span class="max">500</span>
+        </div>
+      {% endif %}
+      
+      <button class="shop-ai-chat-send" 
+              aria-label="{% if is_turkish %}Mesaj gönder{% else %}Send message{% endif %}"
+              disabled>
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <line x1="22" y1="2" x2="11" y2="13"></line>
           <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
         </svg>
       </button>
     </div>
   </div>
+
+  {% comment %} Quick actions menu {% endcomment %}
+  {% if block.settings.enable_quick_actions %}
+    <div class="shop-ai-quick-actions">
+      {% for i in (1..3) %}
+        {% assign action_key = 'quick_action_' | append: i %}
+        {% assign action_text = block.settings[action_key] %}
+        {% if action_text != blank %}
+          <button class="shop-ai-quick-action" data-action="{{ action_text }}">
+            {{ action_text }}
+          </button>
+        {% endif %}
+      {% endfor %}
+    </div>
+  {% endif %}
 </div>
+
+{% comment %} Structured data for SEO {% endcomment %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "{{ shop.name }} AI Chat Assistant",
+  "applicationCategory": "CustomerService",
+  "operatingSystem": "Web"
+}
+</script>
 
 <script src="{{ 'chat.js' | asset_url }}" defer></script>
 <script>
   window.shopChatConfig = {
     promptType: {{ block.settings.system_prompt | json }},
-    welcomeMessage: {{ block.settings.welcome_message | json }}
+    welcomeMessage: {% if is_turkish and block.settings.welcome_message_tr != blank %}{{ block.settings.welcome_message_tr | json }}{% else %}{{ block.settings.welcome_message | json }}{% endif %},
+    theme: {{ block.settings.chat_theme | json }},
+    position: {{ block.settings.chat_position | json }},
+    enableSound: {{ block.settings.enable_sound_notifications }},
+    enableNotifications: {{ block.settings.enable_browser_notifications }},
+    maxFileSize: {{ block.settings.max_file_size | default: 5 }},
+    allowedFileTypes: {{ block.settings.allowed_file_types | split: ',' | json }},
+    apiEndpoint: {{ block.settings.api_endpoint | default: 'https://localhost:3458' | json }},
+    language: '{{ user_locale }}',
+    autoOpen: {{ block.settings.auto_open_chat }},
+    businessHours: {
+      enabled: {{ block.settings.enable_business_hours }},
+      timezone: '{{ block.settings.business_timezone | default: 'UTC' }}',
+      hours: {{ block.settings.business_hours | json }}
+    }
   };
   window.shopId = {{ shop.id }};
+  window.customerId = {% if customer %}{{ customer.id }}{% else %}null{% endif %};
+  window.shopDomain = '{{ shop.permanent_domain }}';
 </script>
+
+{% comment %} Error boundary {% endcomment %}
+<script>
+window.addEventListener('error', function(e) {
+  console.error('Chat Error:', e.error);
+  // Send error to analytics if configured
+  if (window.gtag) {
+    gtag('event', 'exception', {
+      'description': e.error.message,
+      'fatal': false
+    });
+  }
+});
+</script>
+
+{% style %}
+.shop-ai-chat-container {
+  --chat-primary-color: {{ block.settings.chat_bubble_color }};
+  --chat-secondary-color: {{ block.settings.chat_secondary_color }};
+  --chat-border-radius: {{ block.settings.border_radius | default: 16 }}px;
+  --chat-font-size: {{ block.settings.font_size | default: 14 }}px;
+  --chat-animation-speed: {{ block.settings.animation_speed | default: 0.3 }}s;
+}
+
+{% if block.settings.chat_position == 'left' %}
+.shop-ai-chat-container {
+  left: 24px;
+  right: auto;
+}
+.shop-ai-chat-window {
+  left: 0;
+  right: auto;
+}
+{% endif %}
+
+{% if block.settings.hide_on_mobile %}
+@media (max-width: 768px) {
+  .shop-ai-chat-container {
+    display: none;
+  }
+}
+{% endif %}
+
+{% if block.settings.custom_css != blank %}
+{{ block.settings.custom_css }}
+{% endif %}
+{% endstyle %}
 
 {% schema %}
 {
@@ -45,32 +191,140 @@
   "target": "body",
   "settings": [
     {
+      "type": "header",
+      "content": "Appearance"
+    },
+    {
       "type": "color",
       "id": "chat_bubble_color",
-      "label": "Chat Bubble Color",
-      "default": "#5046e4"
+      "label": "Primary Color",
+      "default": "#2d3748"
+    },
+    {
+      "type": "color",
+      "id": "chat_secondary_color", 
+      "label": "Secondary Color",
+      "default": "#d69e2e"
+    },
+    {
+      "type": "select",
+      "id": "chat_position",
+      "label": "Position",
+      "options": [
+        { "value": "right", "label": "Bottom Right" },
+        { "value": "left", "label": "Bottom Left" }
+      ],
+      "default": "right"
+    },
+    {
+      "type": "image_picker",
+      "id": "custom_icon",
+      "label": "Custom Chat Icon"
+    },
+    {
+      "type": "header",
+      "content": "Content"
     },
     {
       "type": "text",
+      "id": "chat_title",
+      "label": "Chat Title",
+      "default": "Konjabags Yapay Zeka Asistanı"
+    },
+    {
+      "type": "textarea",
       "id": "welcome_message",
       "label": "Welcome Message",
       "default": "👋 Hi there! How can I help you today?"
     },
     {
+      "type": "text",
+      "id": "input_placeholder",
+      "label": "Input Placeholder",
+      "default": "Type your message..."
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_language_toggle",
+      "label": "Enable Language Toggle",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Quick Actions"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_quick_actions",
+      "label": "Enable Quick Actions",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "quick_action_1",
+      "label": "Quick Action 1",
+      "placeholder": "e.g., Show me bestsellers"
+    },
+    {
+      "type": "text",
+      "id": "quick_action_2", 
+      "label": "Quick Action 2",
+      "placeholder": "e.g., Track my order"
+    },
+    {
+      "type": "header",
+      "content": "Behavior"
+    },
+    {
       "type": "select",
       "id": "system_prompt",
-      "label": "System Prompt",
+      "label": "AI Personality",
       "options": [
-        {
-          "value": "standardAssistant",
-          "label": "Standard Assistant"
-        },
-        {
-          "value": "enthusiasticAssistant",
-          "label": "Enthusiastic Assistant"
-        }
+        { "value": "standardAssistant", "label": "Professional" },
+        { "value": "enthusiasticAssistant", "label": "Enthusiastic" },
+        { "value": "casualAssistant", "label": "Casual" }
       ],
       "default": "standardAssistant"
+    },
+    {
+      "type": "checkbox",
+      "id": "auto_open_chat",
+      "label": "Auto-open for new visitors",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "show_notification_badge",
+      "label": "Show notification badge",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_sound_notifications",
+      "label": "Enable sound notifications",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Advanced"
+    },
+    {
+      "type": "text",
+      "id": "api_endpoint",
+      "label": "API Endpoint",
+      "default": "https://localhost:3458"
+    },
+    {
+      "type": "checkbox",
+      "id": "hide_on_mobile",
+      "label": "Hide on mobile devices",
+      "default": false
+    },
+    {
+      "type": "textarea",
+      "id": "custom_css",
+      "label": "Custom CSS",
+      "placeholder": ".shop-ai-chat-container { /* custom styles */ }"
     }
   ]
 }

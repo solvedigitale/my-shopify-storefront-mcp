@@ -3,6 +3,52 @@
     "title": "Store Assistant",
     "inputPlaceholder": "Type your message here...",
     "sendButton": "Send",
-    "closeButton": "Close"
+    "closeButton": "Close",
+    "typing": "typing...",
+    "loading": "Loading conversation history...",
+    "welcome": "👋 Hi there! How can I help you today?",
+    "errorGeneral": "Sorry, I couldn't process your request at the moment. Please try again later.",
+    "errorBusy": "Sorry, our servers are currently busy. Please try again later.",
+    "authInProgress": "Authentication in progress. Please complete the process in the popup window.",
+    "authSuccess": "Authorization successful! I'm now continuing with your request.",
+    "authPopupBlocked": "Please allow popups for this site to authenticate with Shopify.",
+    "noProductsFound": "No products found",
+    "topProducts": "Top Matching Products",
+    "addToCart": "Add to Cart",
+    "proceedToCheckout": "click here to proceed to checkout",
+    "noHistoryFetch": "Failed to fetch chat history",
+    "openChat": "Open chat",
+    "closeChat": "Close chat",
+    "typeMessage": "Type message",
+    "sendMessage": "Send message",
+    "chatMessages": "Chat messages",
+    "businessHoursOffline": "We're currently offline. Our business hours are:",
+    "fileUploadError": "File upload failed. Please try again.",
+    "fileTooLarge": "File too large. Maximum size is {size}MB.",
+    "fileTypeNotAllowed": "File type not allowed.",
+    "connectionError": "Connection error. Please check your internet connection.",
+    "rateLimit": "Too many requests. Please wait a moment.",
+    "networkOffline": "You're offline. Please check your connection.",
+    "quickActions": {
+      "bestsellers": "Show bestsellers",
+      "trackOrder": "Track my order",
+      "returnPolicy": "Return policy",
+      "contactSupport": "Contact support",
+      "sizeGuide": "Size guide"
+    },
+    "notifications": {
+      "newMessage": "New message received",
+      "messageSent": "Message sent",
+      "connecting": "Connecting...",
+      "connected": "Connected",
+      "disconnected": "Disconnected"
+    },
+    "accessibility": {
+      "chatWidget": "Chat widget",
+      "minimizeChat": "Minimize chat",
+      "expandChat": "Expand chat",
+      "scrollToBottom": "Scroll to bottom",
+      "newMessageAlert": "New message"
+    }
   }
 }
