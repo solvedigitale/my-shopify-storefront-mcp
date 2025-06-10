@@ -454,7 +454,8 @@
             language: currentLang // Dil bilgisini API'ye gönder
           });
 
-          const streamUrl = 'https://localhost:3458/chat';
+          const streamUrl = window.shopChatConfig?.apiEndpoint + '/chat' || 'https://my-shopify-storefront-mcp.onrender.com/chat';
+
           const shopId = window.shopId;
 
           const response = await fetch(streamUrl, {
@@ -590,7 +591,7 @@
           loadingMessage.textContent = getText('loadingHistory');
           messagesContainer.appendChild(loadingMessage);
 
-          const historyUrl = `https://localhost:3458/chat?history=true&conversation_id=${encodeURIComponent(conversationId)}`;
+          const historyUrl = `/chat?history=true&conversation_id=${encodeURIComponent(conversationId)}`;
 
           const response = await fetch(historyUrl, {
             method: 'GET',
@@ -708,7 +709,7 @@
           attemptCount++;
 
           try {
-            const tokenUrl = 'https://localhost:3458/auth/token-status?conversation_id=' +
+            const tokenUrl = (window.shopChatConfig?.apiEndpoint || 'https://my-shopify-storefront-mcp.onrender.com') + '/auth/token-status?conversation_id=' +
               encodeURIComponent(conversationId);
             const response = await fetch(tokenUrl);
 
