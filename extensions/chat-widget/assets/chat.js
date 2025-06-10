@@ -1,6 +1,13 @@
 /**
  * Shop AI Chat - Türkçe Dil Desteğiyle Geliştirilmiş Versiyon
- */
+*/
+
+// Force correct API endpoint
+window.addEventListener('DOMContentLoaded', function() {
+  window.shopChatConfig = window.shopChatConfig || {};
+  window.shopChatConfig.apiEndpoint = 'https://my-shopify-storefront-mcp.onrender.com';
+  console.log('Forced API endpoint:', window.shopChatConfig.apiEndpoint);
+});
 (function() {
   'use strict';
 
