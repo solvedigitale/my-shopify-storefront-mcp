@@ -113,7 +113,7 @@
 }
 </script>
 
-<script src="{{ 'chat.js' | asset_url }}" defer></script>
+<script src="{{ 'chat.js' | asset_url }}?v={{ 'now' | date: '%s' }}" defer></script>
 <script>
   window.shopChatConfig = {
     promptType: {{ block.settings.system_prompt | json }},
