@@ -2,14 +2,20 @@
  * Shop AI Chat - Türkçe Dil Desteğiyle Geliştirilmiş Versiyon
 */
 
-// Force correct API endpoint
-window.addEventListener('DOMContentLoaded', function() {
-  window.shopChatConfig = window.shopChatConfig || {};
-  window.shopChatConfig.apiEndpoint = 'https://my-shopify-storefront-mcp.onrender.com';
-  console.log('Forced API endpoint:', window.shopChatConfig.apiEndpoint);
-});
+// REMOVED: Force API endpoint override that was causing the issue
+// This was overriding the config from Liquid template
+
 (function() {
   'use strict';
+
+  // Debug mode
+  const DEBUG = true;
+  
+  if (DEBUG) {
+    console.log('Chat Widget Loading...');
+    console.log('Script URL:', document.currentScript?.src);
+    console.log('Initial Config:', window.shopChatConfig);
+  }
 
   // Türkçe dil metinleri
   const TEXTS = {
@@ -57,6 +63,20 @@ window.addEventListener('DOMContentLoaded', function() {
   function getText(key) {
     return TEXTS[currentLang][key] || TEXTS.en[key] || key;
   }
+
+  // Helper function to get API endpoint
+  const getApiEndpoint = () => {
+    // Priority order: shopChatConfig > meta tag > default
+    const endpoint = window.shopChatConfig?.apiEndpoint ||
+           document.querySelector('meta[name="chat-api-endpoint"]')?.content ||
+           'https://my-shopify-storefront-mcp.onrender.com';
+    
+    if (DEBUG) {
+      console.log('Using API endpoint:', endpoint);
+    }
+    
+    return endpoint;
+  };
 
   const ShopAIChat = {
     UI: {
@@ -461,10 +481,20 @@ window.addEventListener('DOMContentLoaded', function() {
             language: currentLang // Dil bilgisini API'ye gönder
           });
 
-          const baseUrl = window.shopChatConfig?.apiEndpoint || 'https://my-shopify-storefront-mcp.onrender.com';
+          const baseUrl = getApiEndpoint();
           const streamUrl = baseUrl.replace(/\/$/, '') + '/chat';
 
-          const shopId = window.shopId;
+          const shopId = window.shopId || window.shopChatConfig?.shopId;
+
+          if (DEBUG) {
+            console.log('Making API request to:', streamUrl);
+            console.log('Request headers:', {
+              'Content-Type': 'application/json',
+              'Accept': 'text/event-stream',
+              'X-Shopify-Shop-Id': shopId,
+              'Accept-Language': currentLang
+            });
+          }
 
           const response = await fetch(streamUrl, {
             method: 'POST',
@@ -514,6 +544,7 @@ window.addEventListener('DOMContentLoaded', function() {
           }
         } catch (error) {
           console.error('Stream error:', error);
+          console.error('Attempted URL:', streamUrl);
           ShopAIChat.UI.removeTypingIndicator();
           ShopAIChat.Message.add(getText('errorGeneral'), 'assistant', messagesContainer);
           ShopAIChat.UI.showNotification(getText('errorGeneral'), 'error');
@@ -599,7 +630,12 @@ window.addEventListener('DOMContentLoaded', function() {
           loadingMessage.textContent = getText('loadingHistory');
           messagesContainer.appendChild(loadingMessage);
 
-          const historyUrl = `/chat?history=true&conversation_id=${encodeURIComponent(conversationId)}`;
+          const baseUrl = getApiEndpoint();
+          const historyUrl = `${baseUrl}/chat?history=true&conversation_id=${encodeURIComponent(conversationId)}`;
+
+          if (DEBUG) {
+            console.log('Fetching history from:', historyUrl);
+          }
 
           const response = await fetch(historyUrl, {
             method: 'GET',
@@ -717,9 +753,14 @@ window.addEventListener('DOMContentLoaded', function() {
           attemptCount++;
 
           try {
-            const baseUrl = window.shopChatConfig?.apiEndpoint || 'https://my-shopify-storefront-mcp.onrender.com';
-            const tokenUrl = baseUrl.replace(/\/$/, '') + '/auth/token-status?conversation_id=' + encodeURIComponent(conversationId);
+            const baseUrl = getApiEndpoint();
+            const tokenUrl = baseUrl.replace(/\/$/, '') + '/auth/token-status?conversation_id=' + 
               encodeURIComponent(conversationId);
+            
+            if (DEBUG) {
+              console.log('Polling token status:', tokenUrl);
+            }
+
             const response = await fetch(tokenUrl);
 
             if (!response.ok) {

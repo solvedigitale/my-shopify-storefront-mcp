@@ -4,7 +4,11 @@
 {% comment %} Preload important assets {% endcomment %}
 <link rel="preload" href="{{ 'chat.js' | asset_url }}" as="script">
 
-
+{% comment %} Check if Turkish language {% endcomment %}
+{% assign is_turkish = false %}
+{% if request.locale.iso_code == 'tr' or request.locale.root_url contains '/tr' %}
+  {% assign is_turkish = true %}
+{% endif %}
 
 <div class="shop-ai-chat-container" 
      data-position="{{ block.settings.chat_position }}"
@@ -39,8 +43,8 @@
   <div class="shop-ai-chat-window" role="dialog" aria-modal="true" aria-labelledby="chat-header-title">
     <div class="shop-ai-chat-header" style="background: {{ block.settings.chat_bubble_color }};">
       <div id="chat-header-title">
-        {% if is_turkish and block.settings.welcome_message_tr != blank %}
-          {{ block.settings.chat_title_tr | default: 'Konjabags Yapay Zeka Asistanı' }}
+        {% if is_turkish and block.settings.chat_title_tr != blank %}
+          {{ block.settings.chat_title_tr }}
         {% else %}
           {{ block.settings.chat_title | default: 'Konjabags AI Assistant' }}
         {% endif %}
@@ -113,7 +117,10 @@
 }
 </script>
 
-<script src="{{ 'chat.js' | asset_url }}?v={{ 'now' | date: '%s' }}" defer></script>
+{% comment %} Add version number for cache busting {% endcomment %}
+{% assign version = 'now' | date: '%Y%m%d%H%M' %}
+<script src="{{ 'chat.js' | asset_url }}?v={{ version }}" defer></script>
+
 <script>
   window.shopChatConfig = {
     promptType: {{ block.settings.system_prompt | json }},
@@ -124,13 +131,15 @@
     enableNotifications: {{ block.settings.enable_browser_notifications }},
     maxFileSize: {{ block.settings.max_file_size | default: 5 }},
     allowedFileTypes: {{ block.settings.allowed_file_types | split: ',' | json }},
-    apiEndpoint: {{ block.settings.api_endpoint | default: 'https://my-shopify-storefront-mcp.onrender.com' | json }},    language: '{{ user_locale }}',
+    apiEndpoint: {{ block.settings.api_endpoint | default: 'https://my-shopify-storefront-mcp.onrender.com' | json }},
+    language: '{{ request.locale.iso_code }}',
     autoOpen: {{ block.settings.auto_open_chat }},
     businessHours: {
       enabled: {{ block.settings.enable_business_hours }},
       timezone: '{{ block.settings.business_timezone | default: 'UTC' }}',
       hours: {{ block.settings.business_hours | json }}
-    }
+    },
+    shopId: {{ shop.id | json }}
   };
   window.shopId = {{ shop.id }};
   window.customerId = {% if customer %}{{ customer.id }}{% else %}null{% endif %};
@@ -222,13 +231,13 @@ window.addEventListener('error', function(e) {
     },
     {
       "type": "header",
-      "content": "Content"
+      "content": "Content - English"
     },
     {
       "type": "text",
       "id": "chat_title",
       "label": "Chat Title",
-      "default": "Konjabags Yapay Zeka Asistanı"
+      "default": "Konjabags AI Assistant"
     },
     {
       "type": "textarea",
@@ -241,6 +250,28 @@ window.addEventListener('error', function(e) {
       "id": "input_placeholder",
       "label": "Input Placeholder",
       "default": "Type your message..."
+    },
+    {
+      "type": "header",
+      "content": "Content - Turkish"
+    },
+    {
+      "type": "text",
+      "id": "chat_title_tr",
+      "label": "Chat Title (Turkish)",
+      "default": "Konjabags Yapay Zeka Asistanı"
+    },
+    {
+      "type": "textarea",
+      "id": "welcome_message_tr",
+      "label": "Welcome Message (Turkish)",
+      "default": "👋 Merhaba! Size nasıl yardımcı olabilirim?"
+    },
+    {
+      "type": "text",
+      "id": "input_placeholder_tr",
+      "label": "Input Placeholder (Turkish)",
+      "default": "Mesajınızı yazın..."
     },
     {
       "type": "checkbox",
@@ -271,6 +302,12 @@ window.addEventListener('error', function(e) {
       "placeholder": "e.g., Track my order"
     },
     {
+      "type": "text",
+      "id": "quick_action_3",
+      "label": "Quick Action 3",
+      "placeholder": "e.g., Return policy"
+    },
+    {
       "type": "header",
       "content": "Behavior"
     },
@@ -281,7 +318,8 @@ window.addEventListener('error', function(e) {
       "options": [
         { "value": "standardAssistant", "label": "Professional" },
         { "value": "enthusiasticAssistant", "label": "Enthusiastic" },
-        { "value": "casualAssistant", "label": "Casual" }
+        { "value": "casualAssistant", "label": "Casual" },
+        { "value": "standardAssistant_tr", "label": "Professional (Turkish)" }
       ],
       "default": "standardAssistant"
     },
@@ -304,6 +342,12 @@ window.addEventListener('error', function(e) {
       "default": false
     },
     {
+      "type": "checkbox",
+      "id": "show_character_counter",
+      "label": "Show character counter",
+      "default": false
+    },
+    {
       "type": "header",
       "content": "Advanced"
     },
@@ -311,13 +355,34 @@ window.addEventListener('error', function(e) {
       "type": "text",
       "id": "api_endpoint",
       "label": "API Endpoint",
-      "default": "https://my-shopify-storefront-mcp.onrender.com"
+      "default": "https://my-shopify-storefront-mcp.onrender.com",
+      "info": "The URL of your deployed chat API server"
     },
     {
       "type": "checkbox",
       "id": "hide_on_mobile",
       "label": "Hide on mobile devices",
       "default": false
+    },
+    {
+      "type": "range",
+      "id": "border_radius",
+      "label": "Border Radius",
+      "min": 0,
+      "max": 32,
+      "step": 4,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "font_size",
+      "label": "Font Size",
+      "min": 12,
+      "max": 18,
+      "step": 1,
+      "unit": "px",
+      "default": 14
     },
     {
       "type": "textarea",

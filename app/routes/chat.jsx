@@ -24,6 +24,13 @@ export async function loader({ request }) {
     });
   }
 
+  if (request.method === "OPTIONS") {
+    return new Response(null, {
+      status: 204,
+      headers: getCorsHeaders(request)
+    });
+  }
+  
   const url = new URL(request.url);
 
   // Handle history fetch requests - matches /chat?history=true&conversation_id=XYZ
