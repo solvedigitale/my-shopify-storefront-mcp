@@ -454,7 +454,8 @@
             language: currentLang // Dil bilgisini API'ye gönder
           });
 
-          const streamUrl = window.shopChatConfig?.apiEndpoint + '/chat' || 'https://my-shopify-storefront-mcp.onrender.com/chat';
+          const baseUrl = window.shopChatConfig?.apiEndpoint || 'https://my-shopify-storefront-mcp.onrender.com';
+          const streamUrl = baseUrl.replace(/\/$/, '') + '/chat';
 
           const shopId = window.shopId;
 
@@ -709,7 +710,8 @@
           attemptCount++;
 
           try {
-            const tokenUrl = (window.shopChatConfig?.apiEndpoint || 'https://my-shopify-storefront-mcp.onrender.com') + '/auth/token-status?conversation_id=' +
+            const baseUrl = window.shopChatConfig?.apiEndpoint || 'https://my-shopify-storefront-mcp.onrender.com';
+            const tokenUrl = baseUrl.replace(/\/$/, '') + '/auth/token-status?conversation_id=' + encodeURIComponent(conversationId);
               encodeURIComponent(conversationId);
             const response = await fetch(tokenUrl);
 

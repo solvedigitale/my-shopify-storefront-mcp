@@ -2,7 +2,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
 {% comment %} Preload important assets {% endcomment %}
-<link rel="preload" href="{{ 'chat.js' | asset_url }}" as="script">
+<link rel="preload" href="{{ 'chat-v2.js' | asset_url }}" as="script">
 
 
 
@@ -113,7 +113,7 @@
 }
 </script>
 
-<script src="{{ 'chat.js' | asset_url }}?v={{ 'now' | date: '%s' }}" defer></script>
+<script src="{{ 'chat-v2.js' | asset_url }}?v={{ 'now' | date: '%s' }}" defer></script>
 <script>
   window.shopChatConfig = {
     promptType: {{ block.settings.system_prompt | json }},
@@ -311,7 +311,7 @@ window.addEventListener('error', function(e) {
       "type": "text",
       "id": "api_endpoint",
       "label": "API Endpoint",
-      "default": "https://my-shopify-storefront-mcp.onrender.com/"
+      "default": "https://my-shopify-storefront-mcp.onrender.com"
     },
     {
       "type": "checkbox",
