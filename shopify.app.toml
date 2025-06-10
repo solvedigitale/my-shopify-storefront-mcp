@@ -3,7 +3,7 @@
 client_id = "069f1af376d02d503ad5f8e2adb87123"
 name = "shop-chat-agent"
 handle = "shop-chat-agent-412"
-application_url = "https://localhost:3458"
+application_url = "https://my-shopify-storefront-mcp.onrender.com"
 embedded = true
 
 [build]
@@ -13,14 +13,13 @@ include_config_on_deploy = true
 api_version = "2025-04"
 
 [access_scopes]
-# Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes
 scopes = "customer_read_customers,customer_read_orders,customer_read_store_credit_account_transactions,customer_read_store_credit_accounts,unauthenticated_read_product_listings"
 
 [auth]
 redirect_urls = [
-  "https://localhost:3458/auth/callback",
-  "https://localhost:3458/auth/shopify/callback",
-  "https://localhost:3458/api/auth/callback"
+  "https://my-shopify-storefront-mcp.onrender.com/auth/callback",
+  "https://my-shopify-storefront-mcp.onrender.com/auth/shopify/callback",
+  "https://my-shopify-storefront-mcp.onrender.com/api/auth/callback"
 ]
 
 [pos]

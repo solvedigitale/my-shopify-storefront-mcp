@@ -124,8 +124,7 @@
     enableNotifications: {{ block.settings.enable_browser_notifications }},
     maxFileSize: {{ block.settings.max_file_size | default: 5 }},
     allowedFileTypes: {{ block.settings.allowed_file_types | split: ',' | json }},
-    apiEndpoint: {{ block.settings.api_endpoint | default: 'https://localhost:3458' | json }},
-    language: '{{ user_locale }}',
+    apiEndpoint: {{ block.settings.api_endpoint | default: 'https://my-shopify-storefront-mcp.onrender.com' | json }},    language: '{{ user_locale }}',
     autoOpen: {{ block.settings.auto_open_chat }},
     businessHours: {
       enabled: {{ block.settings.enable_business_hours }},
@@ -312,7 +311,7 @@ window.addEventListener('error', function(e) {
       "type": "text",
       "id": "api_endpoint",
       "label": "API Endpoint",
-      "default": "https://localhost:3458"
+      "default": "https://my-shopify-storefront-mcp.onrender.com/"
     },
     {
       "type": "checkbox",
